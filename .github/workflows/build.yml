@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -17,17 +17,20 @@ jobs:
       - name: Gerekli Kutuphanelerin Kurulumu
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --upgrade buildozer cython==0.29.33 virtualenv
 
-      - name: Buildozer Ayarlari ve Lisans Onayi
+      - name: Buildozer Ayarlari ve Stabilizasyon
         run: |
           rm -f buildozer.spec
           buildozer init
           sed -i 's/title = My Application/title = KPSS Tarih/g' buildozer.spec
           sed -i 's/package.name = myapp/package.name = kpsstarih/g' buildozer.spec
           sed -i 's/package.domain = org.test/package.domain = org.mehmet/g' buildozer.spec
-          sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
+          echo "android.accept_sdk_license = True" >> buildozer.spec
+          echo "android.ndk = 25b" >> buildozer.spec
+          echo "android.api = 33" >> buildozer.spec
+          echo "android.minapi = 24" >> buildozer.spec
           
       - name: APK Derlemeyi Baslat
         run: buildozer -v android debug
