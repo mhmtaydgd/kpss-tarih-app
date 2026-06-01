@@ -22,6 +22,7 @@ jobs:
 
       - name: Buildozer Ayarlari ve Lisans Onayi
         run: |
+          rm -f buildozer.spec
           buildozer init
           sed -i 's/title = My Application/title = KPSS Tarih/g' buildozer.spec
           sed -i 's/package.name = myapp/package.name = kpsstarih/g' buildozer.spec
@@ -29,7 +30,7 @@ jobs:
           sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
           
       - name: APK Derlemeyi Baslat
-        run: yes | buildozer -v android debug
+        run: buildozer -v android debug
 
       - name: APK Dosyasini İndirilebilir Hale Getir
         uses: actions/upload-artifact@v4
