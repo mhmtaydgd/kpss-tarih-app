@@ -5,7 +5,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Doğrudan Kivy ekibinin her şeyi içinde barındıran resmi Linux paketini çağırıyoruz:
     container:
       image: kivy/buildozer:latest
 
@@ -20,11 +19,11 @@ jobs:
           sed -i 's/^package.name =.*/package.name = kpsstarih/' buildozer.spec
           sed -i 's/^package.domain =.*/package.domain = org.mehmet/' buildozer.spec
           sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
-          # İçerideki resmi sisteme göre API ayarlarını güvenli sürüme çekiyoruz
           sed -i 's/^android.api =.*/android.api = 33/' buildozer.spec
 
       - name: Resmi Kivy Ortamında APK Derlemeyi Başlat
-        run: buildozer -v android debug
+        # "yes |" komutu, sistemin soracağı [y/n] sorularını otomatik geçer
+        run: yes | buildozer -v android debug
 
       - name: APK Dosyasını İndirilebilir Hale Getir
         uses: actions/upload-artifact@v4
