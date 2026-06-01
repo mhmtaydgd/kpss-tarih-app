@@ -8,11 +8,12 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.core.window import Window
+from kivy.metrics import sp, dp  # EKLENDİ: Ekran çözünürlüğüne göre otomatik büyütme araçları
 
 # Harici veritabanımızı içe aktarıyoruz
 from veri_tabani import KPSS_TUM_KONULAR
 
-Window.size = (400, 700)
+# DÜZELTİLDİ: Window.size = (400, 700) satırı silindi. Artık telefonun tüm ekranını kaplayacak.
 Window.clearcolor = (0.95, 0.95, 0.97, 1)
 
 İLERLEME_DOSYASI = "ilerleme.json"
@@ -33,12 +34,12 @@ class MenuEkrani(Screen):
         self.clear_widgets()
         ILERLEME = ilerlemeyi_yukle()
         
-        ana_layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
-        baslik = Label(text="[b]KPSS TARİH[/b]", markup=True, font_size='28sp', color=(0.1, 0.1, 0.2, 1), size_hint=(1, 0.15))
+        ana_layout = BoxLayout(orientation='vertical', padding=dp(20), spacing=dp(20))
+        baslik = Label(text="[b]KPSS TARİH[/b]", markup=True, font_size=sp(28), color=(0.1, 0.1, 0.2, 1), size_hint=(1, 0.15))
         ana_layout.add_widget(baslik)
         
         scroll = ScrollView(size_hint=(1, 0.85))
-        liste_layout = GridLayout(cols=1, spacing=15, size_hint_y=None)
+        liste_layout = GridLayout(cols=1, spacing=dp(15), size_hint_y=None)
         liste_layout.bind(minimum_height=liste_layout.setter('height'))
         
         for konu in KPSS_TUM_KONULAR.keys():
@@ -51,9 +52,9 @@ class MenuEkrani(Screen):
                 buton_metni += f"\n(Doğru: {durum.get('dogru',0)} | Yanlış: {durum.get('yanlis',0)})"
             
             btn = Button(
-                text=buton_metni, size_hint_y=None, height=90, 
+                text=buton_metni, size_hint_y=None, height=dp(100), 
                 background_normal='', background_color=arkaplan_rengi,
-                font_size='16sp', halign='center'
+                font_size=sp(16), halign='center'
             )
             btn.bind(on_press=lambda instance, k=konu: self.konuya_git(k))
             liste_layout.add_widget(btn)
@@ -73,18 +74,18 @@ class KonuEkrani(Screen):
         konu_adi = App.get_running_app().secili_konu
         icerik = KPSS_TUM_KONULAR[konu_adi]["ozet"]
         
-        layout = BoxLayout(orientation='vertical', padding=25, spacing=20)
-        baslik = Label(text=f"[b]{konu_adi}[/b]", markup=True, font_size='22sp', color=(0.1, 0.1, 0.2, 1), size_hint=(1, 0.15), halign='center')
+        layout = BoxLayout(orientation='vertical', padding=dp(25), spacing=dp(20))
+        baslik = Label(text=f"[b]{konu_adi}[/b]", markup=True, font_size=sp(22), color=(0.1, 0.1, 0.2, 1), size_hint=(1, 0.15), halign='center')
         
         metin_alani = ScrollView(size_hint=(1, 0.7))
-        metin = Label(text=icerik, color=(0.2, 0.2, 0.2, 1), font_size='17sp', size_hint_y=None, halign='left', valign='top')
+        metin = Label(text=icerik, color=(0.2, 0.2, 0.2, 1), font_size=sp(17), size_hint_y=None, halign='left', valign='top')
         metin.bind(width=lambda *x: metin.setter('text_size')(metin, (metin.width, None)), texture_size=lambda *x: metin.setter('height')(metin, metin.texture_size[1]))
         metin_alani.add_widget(metin)
         
-        btn_teste_gec = Button(text="Konuyu Anladım, Teste Geç", size_hint=(1, 0.15), background_normal='', background_color=(0.8, 0.4, 0.1, 1), font_size='18sp', bold=True)
+        btn_teste_gec = Button(text="Konuyu Anladım, Teste Geç", size_hint=(1, 0.15), background_normal='', background_color=(0.8, 0.4, 0.1, 1), font_size=sp(18), bold=True)
         btn_teste_gec.bind(on_press=self.teste_git)
         
-        btn_geri = Button(text="Geri Dön", size_hint=(1, 0.1), background_normal='', background_color=(0.6, 0.6, 0.6, 1))
+        btn_geri = Button(text="Geri Dön", size_hint=(1, 0.1), background_normal='', background_color=(0.6, 0.6, 0.6, 1), font_size=sp(16))
         btn_geri.bind(on_press=lambda x: setattr(self.manager, 'current', 'menu_ekrani'))
         
         layout.add_widget(baslik)
@@ -113,21 +114,21 @@ class SoruEkrani(Screen):
             return
             
         soru_verisi = self.sorular[self.mevcut_soru]
-        layout = BoxLayout(orientation='vertical', padding=20, spacing=15)
+        layout = BoxLayout(orientation='vertical', padding=dp(20), spacing=dp(15))
         
-        sayac = Label(text=f"Soru {self.mevcut_soru + 1} / {len(self.sorular)}", color=(0.4, 0.4, 0.4, 1), size_hint=(1, 0.05))
-        soru_label = Label(text=soru_verisi["soru"], color=(0.1, 0.1, 0.2, 1), font_size='18sp', bold=True, size_hint=(1, 0.3), halign='center', valign='middle')
+        sayac = Label(text=f"Soru {self.mevcut_soru + 1} / {len(self.sorular)}", color=(0.4, 0.4, 0.4, 1), size_hint=(1, 0.05), font_size=sp(16))
+        soru_label = Label(text=soru_verisi["soru"], color=(0.1, 0.1, 0.2, 1), font_size=sp(18), bold=True, size_hint=(1, 0.3), halign='center', valign='middle')
         soru_label.bind(size=soru_label.setter('text_size'))
         
         layout.add_widget(sayac)
         layout.add_widget(soru_label)
         
-        self.bildirim = Label(text="", size_hint=(1, 0.1), font_size='16sp', bold=True)
+        self.bildirim = Label(text="", size_hint=(1, 0.1), font_size=sp(16), bold=True)
         layout.add_widget(self.bildirim)
         
-        secenekler_layout = GridLayout(cols=1, spacing=10, size_hint=(1, 0.55))
+        secenekler_layout = GridLayout(cols=1, spacing=dp(10), size_hint=(1, 0.55))
         for secenek in soru_verisi["secenekler"]:
-            btn = Button(text=secenek, background_normal='', background_color=(0.9, 0.9, 0.9, 1), color=(0.2, 0.2, 0.2, 1), font_size='16sp')
+            btn = Button(text=secenek, background_normal='', background_color=(0.9, 0.9, 0.9, 1), color=(0.2, 0.2, 0.2, 1), font_size=sp(16))
             btn.bind(on_press=lambda instance, s=secenek, c=soru_verisi["cevap"]: self.cevap_kontrol(s, c))
             secenekler_layout.add_widget(btn)
             
@@ -154,12 +155,12 @@ class SoruEkrani(Screen):
         ilerlemeyi_kaydet(ilerleme)
         
         self.clear_widgets()
-        layout = BoxLayout(orientation='vertical', padding=30, spacing=20)
+        layout = BoxLayout(orientation='vertical', padding=dp(30), spacing=dp(20))
         
-        sonuc_baslik = Label(text="[b]TEST TAMAMLANDI![/b]", markup=True, font_size='26sp', color=(0.2, 0.6, 0.3, 1), size_hint=(1, 0.3))
-        istatistik = Label(text=f"Doğru: {self.dogru_sayisi}\nYanlış: {self.yanlis_sayisi}", font_size='22sp', color=(0.2, 0.2, 0.2, 1), size_hint=(1, 0.4), halign='center')
+        sonuc_baslik = Label(text="[b]TEST TAMAMLANDI![/b]", markup=True, font_size=sp(26), color=(0.2, 0.6, 0.3, 1), size_hint=(1, 0.3))
+        istatistik = Label(text=f"Doğru: {self.dogru_sayisi}\nYanlış: {self.yanlis_sayisi}", font_size=sp(22), color=(0.2, 0.2, 0.2, 1), size_hint=(1, 0.4), halign='center')
         
-        btn_menu = Button(text="Ana Menüye Dön", size_hint=(1, 0.2), background_normal='', background_color=(0.2, 0.5, 0.8, 1), font_size='18sp')
+        btn_menu = Button(text="Ana Menüye Dön", size_hint=(1, 0.2), background_normal='', background_color=(0.2, 0.5, 0.8, 1), font_size=sp(18))
         btn_menu.bind(on_press=lambda x: setattr(self.manager, 'current', 'menu_ekrani'))
         
         layout.add_widget(sonuc_baslik)
