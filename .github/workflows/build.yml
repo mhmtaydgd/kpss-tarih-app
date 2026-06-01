@@ -17,7 +17,7 @@ jobs:
       - name: Gerekli Kutuphanelerin Kurulumu
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev lib32stdc++6 lib32z1
           pip install --upgrade buildozer cython==0.29.33 virtualenv
 
       - name: Buildozer Ayarlari ve Stabilizasyon
@@ -31,6 +31,8 @@ jobs:
           echo "android.ndk = 25b" >> buildozer.spec
           echo "android.api = 33" >> buildozer.spec
           echo "android.minapi = 24" >> buildozer.spec
+          echo "android.build_tools_version = 33.0.2" >> buildozer.spec
+          echo "p4a.branch = master" >> buildozer.spec
           
       - name: APK Derlemeyi Baslat
         run: buildozer -v android debug
