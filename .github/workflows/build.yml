@@ -1,15 +1,18 @@
-name: APK Derleyici (Kesin Çözüm)
+name: APK Derleyici (Resmi Kivy Sistemi)
 
 on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Doğrudan Kivy ekibinin her şeyi içinde barındıran resmi Linux paketini çağırıyoruz:
+    container:
+      image: kivy/buildozer:latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Buildozer Ayarlarını Hazırla
+      - name: Buildozer Ayarlarını Yap ve Lisans Onayla
         run: |
           rm -f buildozer.spec
           buildozer init
@@ -17,11 +20,11 @@ jobs:
           sed -i 's/^package.name =.*/package.name = kpsstarih/' buildozer.spec
           sed -i 's/^package.domain =.*/package.domain = org.mehmet/' buildozer.spec
           sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
+          # İçerideki resmi sisteme göre API ayarlarını güvenli sürüme çekiyoruz
+          sed -i 's/^android.api =.*/android.api = 33/' buildozer.spec
 
-      - name: Resmi Paket ile APK Derleme
-        uses: hergertarian/buildozer-action@v1
-        with:
-          command: buildozer -v android debug
+      - name: Resmi Kivy Ortamında APK Derlemeyi Başlat
+        run: buildozer -v android debug
 
       - name: APK Dosyasını İndirilebilir Hale Getir
         uses: actions/upload-artifact@v4
