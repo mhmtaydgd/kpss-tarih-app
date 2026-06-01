@@ -1,4 +1,4 @@
-name: APK Derleyici (Resmi Kivy Sistemi)
+name: APK Derleyici (Kesin Çözüm)
 
 on: [push]
 
@@ -7,6 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kivy/buildozer:latest
+
+    # İŞTE ANA ŞALTER BURASI: Tüm "Emin misin?" sorularını tamamen susturur.
+    env:
+      ALLOW_ROOT: 1
 
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +26,7 @@ jobs:
           sed -i 's/^android.api =.*/android.api = 33/' buildozer.spec
 
       - name: Resmi Kivy Ortamında APK Derlemeyi Başlat
-        # "yes |" komutu, sistemin soracağı [y/n] sorularını otomatik geçer
-        run: yes | buildozer -v android debug
+        run: buildozer -v android debug
 
       - name: APK Dosyasını İndirilebilir Hale Getir
         uses: actions/upload-artifact@v4
