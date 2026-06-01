@@ -1,4 +1,4 @@
-name: APK Derleyici (Kesin Çözüm)
+name: APK Derleyici
 
 on: [push]
 
@@ -8,28 +8,29 @@ jobs:
     container:
       image: kivy/buildozer:latest
 
-    # İŞTE ANA ŞALTER BURASI: Tüm "Emin misin?" sorularını tamamen susturur.
+    # Hatamı düzelttiğim doğru şalter
     env:
-      ALLOW_ROOT: 1
+      BUILDOZER_ALLOW_ROOT: "1"
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Buildozer Ayarlarını Yap ve Lisans Onayla
+      - name: Buildozer Ayarlarını Yap
         run: |
           rm -f buildozer.spec
-          buildozer init
+          # İkinci güvenlik önlemi: init komutuna da "yes" eklendi
+          yes | buildozer init
           sed -i 's/^title =.*/title = KPSS Tarih/' buildozer.spec
           sed -i 's/^package.name =.*/package.name = kpsstarih/' buildozer.spec
           sed -i 's/^package.domain =.*/package.domain = org.mehmet/' buildozer.spec
           sed -i 's/# android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
           sed -i 's/^android.api =.*/android.api = 33/' buildozer.spec
 
-      - name: Resmi Kivy Ortamında APK Derlemeyi Başlat
-        run: buildozer -v android debug
+      - name: APK Derlemeyi Başlat
+        run: yes | buildozer -v android debug
 
-      - name: APK Dosyasını İndirilebilir Hale Getir
+      - name: APK Dosyasını İndir
         uses: actions/upload-artifact@v4
         with:
-          name: KpssTarih_Uygulamasi
+          name: KPSS_Tarih_Uygulamasi
           path: bin/*.apk
